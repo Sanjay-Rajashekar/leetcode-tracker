@@ -3,12 +3,12 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC57Bk3QNBN0Xc71aQmuJ3yu58bR860G4k",
-  authDomain: "leetcode-tracker-7dcb9.firebaseapp.com",
-  projectId: "leetcode-tracker-7dcb9",
-  storageBucket: "leetcode-tracker-7dcb9.firebasestorage.app",
-  messagingSenderId: "260040949663",
-  appId: "1:260040949663:web:b5025efc6c94bd9d8a07aa"
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID
 };
 
 // Initialize Firebase
