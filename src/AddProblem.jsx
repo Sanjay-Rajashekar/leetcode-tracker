@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 import { Link } from 'react-router-dom';
-
+import { useAuth } from './AuthContext';
 
 function AddProblem() {
   const [form, setForm] = useState({
@@ -16,6 +16,7 @@ function AddProblem() {
   });
 
   const navigate = useNavigate();
+  const { currentUser } = useAuth(); // ✅ get current user
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -24,16 +25,25 @@ function AddProblem() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!currentUser) {
+      alert('You must be logged in to add a problem.');
+      return;
+    }
+
     try {
-      await addDoc(collection(db, 'problems'), {
-        title: form.title,
-        link: form.link,
-        code: form.code,
-        explanation: form.explanation,
-        difficulty: form.difficulty,
-        tags: form.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-        createdAt: serverTimestamp(),
-      });
+      // ✅ add to user's subcollection
+      await addDoc(
+        collection(db, 'problems', currentUser.uid, 'userProblems'),
+        {
+          title: form.title,
+          link: form.link,
+          code: form.code,
+          explanation: form.explanation,
+          difficulty: form.difficulty,
+          tags: form.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+          createdAt: serverTimestamp(),
+        }
+      );
 
       setForm({
         title: '',
@@ -98,8 +108,7 @@ function AddProblem() {
           rows={3}
           className="w-full p-2 border rounded"
         />
-        
-        {/* Difficulty Dropdown */}
+
         <select
           name="difficulty"
           value={form.difficulty}
@@ -113,7 +122,6 @@ function AddProblem() {
           <option value="Hard">🔴 Hard</option>
         </select>
 
-        {/* Tags Input */}
         <input
           type="text"
           name="tags"
